@@ -114,21 +114,12 @@ class DiscordOnliner:
 
 def is_active_time():
     now = datetime.datetime.now()
-    # 12 hours a day: 8 AM to 8 PM
-    if not (8 <= now.hour < 20):
-        return False
-    
-    # Every hour is 30 minutes online
-    # Specifically: 2 mins on, 2 mins off, for the first 30 mins
-    if now.minute >= 30:
-        return False
-        
-    # 2 mins online, 2 mins offline
-    # minute 0-1, 4-5, 8-9... (minute // 2) % 2 == 0
-    if (now.minute // 2) % 2 != 0:
-        return False
-        
-    return True
+    # 2 mins online, 2 mins offline, repeated 24/7
+    # (minute // 2) % 2 == 0:
+    # 0-1 (Online), 2-3 (Offline), 4-5 (Online)...
+    if (now.minute // 2) % 2 == 0:
+        return True
+    return False
 
 def run_scheduler():
     onliner = DiscordOnliner(usertoken, status, custom_status)
